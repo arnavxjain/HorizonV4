@@ -40,7 +40,7 @@ cap = cv2.VideoCapture(0)
 while True:
     success, imgL = cap.read()
     img = cv2.resize(imgL, (0, 0), None, 0.25, 0.25)
-    img = cv2.cvtColor(imgL, cv2.COLOR_BGR2RGB)
+    imgMain = cv2.cvtColor(imgL, cv2.COLOR_BGR2RGB)
 
     facesCurFrame = face_recognition.face_locations(img)
     encodesCurFrame = face_recognition.face_encodings(img, facesCurFrame)
@@ -53,16 +53,14 @@ while True:
         matchIndex = np.argmin(faceDis)
 
         if matches[matchIndex]:
-            name = classNames[matchIndex]
+            name = classNames[matchIndex].upper()
+            print(name)
 
+            y1, x2, y2, x1 = faceLocation
+            y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
+            cv2.rectangle(imgMain, (x1, y1), (x2, y2), (255, 255, 0), 2)
+            cv2.rectangle(imgMain, (x1, y2 - 35), (x2, y2), (255, 255, 0), cv2.FILLED)
+            cv2.putText(imgMain, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
 
-# # Loading assets[0]
-# print('Loading Assets...')
-# epo1 = face_recognition.load_image_file("assets/epo1.jpg")
-# epo1 = cv2.cvtColor(epo1, cv2.COLOR_BGR2RGB)
-#
-# # Loading assets[1]
-# print('Coloring the assets')
-# epo2 = face_recognition.load_image_file("assets/epo2.jpg")
-# epo2 = cv2.cvtColor(epo2, cv2.COLOR_BGR2RGB)
-#
+    cv2.imshow('HorizonV4 Engine', imgMain)
+    cv2.waitKey(1)
