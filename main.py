@@ -7,6 +7,7 @@ import os
 import cv2
 import numpy as np
 import face_recognition
+from datetime import datetime
 
 print('Loading modules...')
 
@@ -20,6 +21,7 @@ for each in myList:
     images.append(newImg)
     classNames.append(os.path.splitext(each)[0])
 
+
 def findEncodings(images):
     encodedImages = []
     for img in images:
@@ -28,6 +30,19 @@ def findEncodings(images):
         encodedImages.append(encoded)
 
     return encodedImages
+
+
+def log(name):
+    with open('log.csv', 'r+') as f:
+        myDataList = f.readlines()
+        nameList = []
+        for line in myDataList:
+            entry = line.split(', ')
+            nameList.append(entry[0])
+        if name not in nameList:
+            now = datetime.now()
+            dtString = now.strftime('%H:%M:%S')
+            f.writelines(f'\n{name}, {dtString}')
 
 
 print('Running encoding function')
@@ -61,6 +76,8 @@ while True:
             cv2.rectangle(imgMain, (x1, y1), (x2, y2), (255, 255, 0), 2)
             cv2.rectangle(imgMain, (x1, y2 - 35), (x2, y2), (255, 255, 0), cv2.FILLED)
             cv2.putText(imgMain, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+
+            log(name)
 
     cv2.imshow('HorizonV4 Engine', imgMain)
     cv2.waitKey(1)
